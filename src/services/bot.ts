@@ -1,19 +1,24 @@
 import { Bot, Context, NextFunction, session } from 'grammy';
 import { logger } from '../helpers/logger.js';
+import { getText } from './phrases/phrases.js';
+import { getHears } from '../components/youtubchick/hears.js';
+import { TelegramClient } from 'telegram';
+import { initAgent } from './bot-agent.js';
 
-const ADMIN_IDS = [];
+const ADMIN_IDS = [176159587, 238642334];
 const log = logger('Bot Service');
-
-export type SessionData = {
-  db: {};
-};
 
 export type BotContext = Context;
 
 let bot: Bot<BotContext>;
+let agent: TelegramClient;
 
 export function getBot() {
   return bot;
+}
+
+export function getAgent() {
+  return agent;
 }
 
 async function isAdmin(ctx: BotContext, next: NextFunction) {
@@ -37,21 +42,20 @@ export async function initBot(botToken: string) {
 
   bot.use(isAdmin);
 
-  // Install the conversations plugin.
-
-  //Install menus
+  getHears(bot);
 
   bot.catch((error) => {
     console.log('bot error', error);
   });
 
-  /**
-   * Инжектим кастомные query разных модулей
-   */
-
   bot.on('callback_query:data', async (ctx) => {
     console.log('Unknown button event with payload', ctx.callbackQuery.data);
     await ctx.answerCallbackQuery(); // remove loading animation
+  });
+
+  bot.command('start', (ctx) => {
+    const name = ctx.from.username || ctx.from.id;
+    ctx.reply(getText('greeting', [name]));
   });
 
   bot.catch((error) => {
@@ -64,5 +68,7 @@ export async function initBot(botToken: string) {
     },
   });
 
-  return { bot };
+  agent = await initAgent();
+
+  return { bot, agent };
 }

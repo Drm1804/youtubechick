@@ -14,6 +14,11 @@ export const conf: Config = {
     messagingSenderId: '',
     appId: '',
   },
+  tlg: {
+    apiId: NaN, 
+    apiHash: ''
+  },
+  agent: '',
   botToken: '',
   storagePath: `${process.cwd()}/files/`,
 };

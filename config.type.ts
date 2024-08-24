@@ -12,6 +12,11 @@ export type Config = {
     messagingSenderId: string;
     appId: string;
   };
+  tlg: {
+    apiId: number;
+    apiHash: string;
+  };
+  agent: string;
   botToken: string;
   storagePath: string;
 };
