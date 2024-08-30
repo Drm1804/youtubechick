@@ -17,21 +17,21 @@ export function getHears(bot: Bot<BotContext>) {
     const message = await ctx.reply(getText('startDownloadLiveMessage'));
 
     const {
-      chat: { id: chantId, username },
+      chat: { id: chantId },
       message_id,
 
     } = message || {};
 
     const bot = getBot();
 
-    if (!username || !chantId || !message_id) {
+    if (!name || !chantId || !message_id) {
       return '';
     }
 
     const isSuccess = await getFileAndSendViaAgent(
       chantId,
       message_id,
-      username,
+      name,
       url,
     );
 

@@ -5,7 +5,7 @@ import { getHears } from '../components/youtubchick/hears.js';
 import { TelegramClient } from 'telegram';
 import { initAgent } from './bot-agent.js';
 
-const ADMIN_IDS = [176159587, 238642334];
+const ADMIN_IDS = [176159587, 238642334, 1922790663];
 const log = logger('Bot Service');
 
 export type BotContext = Context;

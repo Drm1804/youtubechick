@@ -19,7 +19,7 @@ const getFileWithPath = (internalId: string) =>
 export async function getFileAndSendViaAgent(
   chatId: number,
   messageId: number,
-  userId: string,
+  name: string | number,
   url: string,
 ) {
   const bot = getBot();
@@ -43,8 +43,8 @@ export async function getFileAndSendViaAgent(
   }, 800);
 
   try {
-    log.info('Начала загружать файлы в телегу' + userId);
-    await agent.sendFile(userId, {
+    log.info('Начала загружать файлы в телегу' + name);
+    await agent.sendFile(name, {
       file: getFileWithPath(internalId),
       voiceNote: true,
     });
