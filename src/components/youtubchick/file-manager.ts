@@ -8,6 +8,7 @@ import { getText } from '../../services/phrases/phrases.js';
 import { Api } from 'telegram';
 import { getFileWithPath } from './utils.js';
 import { getAudioInfo } from './video-info.js';
+import { pause } from '../../helpers/utils.js';
 
 const log = logger('File Manager');
 
@@ -45,23 +46,29 @@ export async function getFileAndSendViaAgent(
     const info = await getAudioInfo(internalId);
 
     const { duration, title, artist } = info || {};
+    try {
+      await agent.sendFile(name, {
+        file: getFileWithPath(internalId, DEFAULT_EXT),
+        caption: getText('messageWithDescriptionAudio', [title, url]),
+        attributes: [
+          new Api.DocumentAttributeAudio({
+            duration,
+            voice: false,
+            title,
+            performer: artist,
+            waveform: undefined,
+          }),
+        ],
+        progressCallback: (pr) =>
+          cb(getText('updateTlgProgress', [Math.round(pr * 100)])),
+      });
+    } catch (err) {
+      log.error(err);
+    }
 
-    await agent.sendFile(name, {
-      file: getFileWithPath(internalId, DEFAULT_EXT),
-      caption: getText('messageWithDescriptionAudio', [title, url]),
-      attributes: [
-        new Api.DocumentAttributeAudio({
-          duration,
-          voice: false,
-          title,
-          performer: artist,
-          waveform: undefined,
-        }),
-      ],
-      progressCallback: (pr) =>
-        cb(getText('updateTlgProgress', [Math.round(pr * 100)])),
-    });
+    log.info('Pause between remove file');
 
+    await pause(1000);
     await removeFile(internalId);
   } catch (err) {
     log.error(err);
@@ -98,6 +105,7 @@ export async function download(
 }
 
 async function removeFile(internalId: string) {
+  log.info('removeFile');
   return new Promise((resolve) => {
     const command = `rm ${getFileWithPath(internalId)}`;
 

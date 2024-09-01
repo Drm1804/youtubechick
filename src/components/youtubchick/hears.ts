@@ -4,6 +4,11 @@ import { BotContext, getBot } from '../../services/bot.js';
 import ytbUtils from 'youtube-url';
 
 import { getFileAndSendViaAgent } from './file-manager.js';
+import {
+  decreaseTaskCount,
+  increaseTaskCount,
+  isPossibleTakeTask,
+} from './queue.js';
 
 export function getHears(bot: Bot<BotContext>) {
   bot.on(':text', async (ctx) => {
@@ -19,7 +24,6 @@ export function getHears(bot: Bot<BotContext>) {
     const {
       chat: { id: chantId },
       message_id,
-
     } = message || {};
 
     const bot = getBot();
@@ -28,12 +32,20 @@ export function getHears(bot: Bot<BotContext>) {
       return '';
     }
 
+    if (!isPossibleTakeTask()) {
+      return ctx.reply(getText('botIsOverload'));
+    }
+
+    increaseTaskCount();
+
     const isSuccess = await getFileAndSendViaAgent(
       chantId,
       message_id,
       name,
       url,
     );
+
+    decreaseTaskCount();
 
     if (isSuccess) {
       return await bot.api.editMessageText(

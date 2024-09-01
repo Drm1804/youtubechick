@@ -1,3 +1,5 @@
+import { getRandomEmoji } from './unik-emoji.js';
+
 export type PhKeys =
   | 'greeting'
   | 'youtubeLinkValidationError'
@@ -6,7 +8,8 @@ export type PhKeys =
   | 'successDownloadLiveMessage'
   | 'updateDownloadLiveMessage'
   | 'updateTlgProgress'
-  | 'messageWithDescriptionAudio';
+  | 'messageWithDescriptionAudio'
+  | 'botIsOverload';
 
 type Func = (...args: Array<string | number>) => string;
 
@@ -19,11 +22,12 @@ const store: Record<PhKeys, Func | string> = {
   successDownloadLiveMessage: 'Готово, наш агент уже все прислал 😎',
   errorDownloadLiveMessage: 'Не получилось...',
   updateDownloadLiveMessage: (t: string) =>
-    `Я в процессе, сейчас происходит: \n\n${t}`,
-  updateTlgProgress: (t: string) =>
-    `[telegram] Загрузка файла: ${t}%`,
+    `${getRandomEmoji()} Я в процессе, сейчас происходит: \n\n${t}`,
+  updateTlgProgress: (t: string) => `[telegram] Загрузка файла: ${t}%`,
   messageWithDescriptionAudio: (filename: string, url: string) =>
     `${filename} \n\n Ссылка на видео: ${url}`,
+  botIsOverload: () =>
+    'Бот перегружен, попробуй отправить видео через пару минут',
 };
 
 export function getText(key: PhKeys, args?: Array<string | number>): string {
