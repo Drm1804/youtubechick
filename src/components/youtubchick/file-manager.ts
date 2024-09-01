@@ -5,16 +5,17 @@ import { exec } from 'child_process';
 import { getAgent, getBot } from '../../services/bot.js';
 import { getLmText, throttle } from './live-message.js';
 import { getText } from '../../services/phrases/phrases.js';
-import { getLoadPh } from '../../services/phrases/load-file.phrases.js';
+import { Api } from 'telegram';
+import { getFileWithPath } from './utils.js';
+import { getAudioInfo } from './video-info.js';
 
 const log = logger('File Manager');
 
-const getCommand = (internalId: string, url: string) => {
-  return `yt-dlp -f bestaudio -x --audio-format mp3 -o "${conf.storagePath}${internalId}.%(ext)s" ${url}`;
-};
+export const DEFAULT_EXT = 'mp3';
 
-const getFileWithPath = (internalId: string) =>
-  `${conf.storagePath}${internalId}.mp3`;
+const getCommand = (internalId: string, url: string) => {
+  return `yt-dlp --embed-metadata -f bestaudio -x --audio-format ${DEFAULT_EXT} -o "${conf.storagePath}${internalId}.%(ext)s" ${url}`;
+};
 
 export async function getFileAndSendViaAgent(
   chatId: number,
@@ -38,20 +39,32 @@ export async function getFileAndSendViaAgent(
 
   const agent = getAgent();
 
-  setTimeout(() => {
-    editMes(getText('updateDownloadLiveMessage', [getLoadPh()]));
-  }, 800);
-
   try {
-    log.info('Начала загружать файлы в телегу' + name);
+    log.info('Начала загружать файлы в телегу ' + name);
+
+    const info = await getAudioInfo(internalId);
+
+    const { duration, title, artist } = info || {};
+
     await agent.sendFile(name, {
-      file: getFileWithPath(internalId),
-      voiceNote: true,
+      file: getFileWithPath(internalId, DEFAULT_EXT),
+      caption: getText('messageWithDescriptionAudio', [title, url]),
+      attributes: [
+        new Api.DocumentAttributeAudio({
+          duration,
+          voice: false,
+          title,
+          performer: artist,
+          waveform: undefined,
+        }),
+      ],
+      progressCallback: (pr) =>
+        cb(getText('updateTlgProgress', [Math.round(pr * 100)])),
     });
 
-    // clearInterval(intervalKey);
     await removeFile(internalId);
   } catch (err) {
+    log.error(err);
     return false;
   }
 

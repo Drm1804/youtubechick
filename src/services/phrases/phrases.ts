@@ -4,7 +4,9 @@ export type PhKeys =
   | 'startDownloadLiveMessage'
   | 'errorDownloadLiveMessage'
   | 'successDownloadLiveMessage'
-  | 'updateDownloadLiveMessage';
+  | 'updateDownloadLiveMessage'
+  | 'updateTlgProgress'
+  | 'messageWithDescriptionAudio';
 
 type Func = (...args: Array<string | number>) => string;
 
@@ -18,6 +20,10 @@ const store: Record<PhKeys, Func | string> = {
   errorDownloadLiveMessage: 'Не получилось...',
   updateDownloadLiveMessage: (t: string) =>
     `Я в процессе, сейчас происходит: \n\n${t}`,
+  updateTlgProgress: (t: string) =>
+    `[telegram] Загрузка файла: ${t}%`,
+  messageWithDescriptionAudio: (filename: string, url: string) =>
+    `${filename} \n\n Ссылка на видео: ${url}`,
 };
 
 export function getText(key: PhKeys, args?: Array<string | number>): string {

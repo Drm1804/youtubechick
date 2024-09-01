@@ -1,6 +1,6 @@
 {
   "name": "youtubchick-bot",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
   "type": "module",
   "engines": {
@@ -38,6 +38,7 @@
     "firebase": "^10.5.2",
     "grammy": "^1.29.0",
     "log4js": "^6.9.1",
+    "music-metadata": "^10.3.1",
     "telegram": "^2.24.11",
     "tslib": "~2.6.2",
     "youtube-url": "^0.5.0"
