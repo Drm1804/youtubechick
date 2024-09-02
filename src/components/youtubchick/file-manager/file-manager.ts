@@ -7,9 +7,10 @@ import { Api } from 'telegram';
 import { getFileWithPath } from '../utils.js';
 import { getAudioInfo } from '../video-info.js';
 import { pause } from '../../../helpers/utils.js';
-import { pyDownload } from './python-downloader.js';
+// import { pyDownload } from './python-downloader.js';
 import { exec } from 'child_process';
 import { DEFAULT_EXT } from './const.js';
+import { jsDownload } from './native-downloader.js';
 
 const log = logger('File Manager');
 
@@ -26,7 +27,7 @@ export async function getFileAndSendViaAgent(
   const cb = (data: string) =>
     throttle(editMes.bind(null, getLmText('update', data)));
 
-  const isSuccessDownload = await pyDownload(url, internalId, cb);
+  const isSuccessDownload = await jsDownload(url, internalId, cb);
 
   if (!isSuccessDownload) {
     log.info('Not success download');

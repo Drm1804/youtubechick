@@ -1,21 +1,21 @@
 import { Bot } from 'grammy';
 import { getText } from '../../services/phrases/phrases.js';
 import { BotContext, getBot } from '../../services/bot.js';
-import ytbUtils from 'youtube-url';
 
-import { getFileAndSendViaAgent } from './file-manager.js';
+import { getFileAndSendViaAgent } from './file-manager/file-manager.js';
 import {
   decreaseTaskCount,
   increaseTaskCount,
   isPossibleTakeTask,
 } from './queue.js';
+import ytdl from '@distube/ytdl-core';
 
 export function getHears(bot: Bot<BotContext>) {
   bot.on(':text', async (ctx) => {
     const name = ctx.from.username || ctx.from.id;
     const url = ctx.message.text;
 
-    if (!ytbUtils.valid(url)) {
+    if (!ytdl.validateURL(url)) {
       return ctx.reply(getText('youtubeLinkValidationError', [name]));
     }
 

@@ -1,7 +1,7 @@
 import { logger } from '../../helpers/logger.js';
 
 let count = 0;
-const LIMIT = 2;
+const LIMIT = 1;
 
 const log = logger('Queue service');
 

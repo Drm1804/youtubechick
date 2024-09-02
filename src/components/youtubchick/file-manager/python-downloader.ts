@@ -10,6 +10,9 @@ const getCommand = (internalId: string, url: string) => {
 };
 
 type Func = (...args: string[]) => void;
+
+// @deprecated - вызывать при каждой загрузке дочерний питоновский процесс кажется дорого. 
+// тем не менее способ отлично работает. Оставил его для истории
 export async function pyDownload(
   url: string,
   internalId: string,
