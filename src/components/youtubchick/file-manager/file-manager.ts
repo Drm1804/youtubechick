@@ -1,22 +1,18 @@
-import { conf } from '../../../config.js';
 import { uuidv4 } from '@firebase/util';
-import { logger } from '../../helpers/logger.js';
-import { exec } from 'child_process';
-import { getAgent, getBot } from '../../services/bot.js';
-import { getLmText, throttle } from './live-message.js';
-import { getText } from '../../services/phrases/phrases.js';
+import { logger } from '../../../helpers/logger.js';
+import { getAgent, getBot } from '../../../services/bot.js';
+import { getLmText, throttle } from '../live-message.js';
+import { getText } from '../../../services/phrases/phrases.js';
 import { Api } from 'telegram';
-import { getFileWithPath } from './utils.js';
-import { getAudioInfo } from './video-info.js';
-import { pause } from '../../helpers/utils.js';
+import { getFileWithPath } from '../utils.js';
+import { getAudioInfo } from '../video-info.js';
+import { pause } from '../../../helpers/utils.js';
+// import { pyDownload } from './python-downloader.js';
+import { exec } from 'child_process';
+import { DEFAULT_EXT } from './const.js';
+import { jsDownload } from './native-downloader.js';
 
 const log = logger('File Manager');
-
-export const DEFAULT_EXT = 'mp3';
-
-const getCommand = (internalId: string, url: string) => {
-  return `yt-dlp --embed-metadata -f bestaudio -x --audio-format ${DEFAULT_EXT} -o "${conf.storagePath}${internalId}.%(ext)s" ${url}`;
-};
 
 export async function getFileAndSendViaAgent(
   chatId: number,
@@ -31,7 +27,7 @@ export async function getFileAndSendViaAgent(
   const cb = (data: string) =>
     throttle(editMes.bind(null, getLmText('update', data)));
 
-  const isSuccessDownload = await download(url, internalId, cb);
+  const isSuccessDownload = await jsDownload(url, internalId, cb);
 
   if (!isSuccessDownload) {
     log.info('Not success download');
@@ -43,7 +39,7 @@ export async function getFileAndSendViaAgent(
   try {
     log.info('Начала загружать файлы в телегу ' + name);
 
-    const info = await getAudioInfo(internalId);
+    const info = await getAudioInfo(url);
 
     const { duration, title, artist } = info || {};
     try {
@@ -76,32 +72,6 @@ export async function getFileAndSendViaAgent(
   }
 
   return true;
-}
-type Func = (...args: string[]) => void;
-export async function download(
-  url: string,
-  internalId: string,
-  updateCb: Func,
-): Promise<string | undefined> {
-  log.info('File name ' + internalId);
-  return new Promise((resolve) => {
-    const command = getCommand(internalId, url);
-
-    const process = exec(command, (error) => {
-      if (error) {
-        log.error('downloadFile error');
-        log.error(error);
-        resolve(undefined);
-      }
-
-      resolve(internalId);
-    });
-
-    process.stdout.on('data', function (data) {
-      log.info(data);
-      updateCb(data);
-    });
-  });
 }
 
 async function removeFile(internalId: string) {

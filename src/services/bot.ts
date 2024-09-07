@@ -4,8 +4,8 @@ import { getText } from './phrases/phrases.js';
 import { getHears } from '../components/youtubchick/hears.js';
 import { TelegramClient } from 'telegram';
 import { initAgent } from './bot-agent.js';
+import { conf } from '../../config.js';
 
-const ADMIN_IDS = [176159587, 238642334, 1922790663];
 const log = logger('Bot Service');
 
 export type BotContext = Context;
@@ -22,7 +22,7 @@ export function getAgent() {
 }
 
 async function isAdmin(ctx: BotContext, next: NextFunction) {
-  if (ADMIN_IDS.includes(ctx.from.id)) {
+  if ((conf.admins || []).length === 0 || conf.admins.includes(ctx.from.id)) {
     await next();
   }
 }

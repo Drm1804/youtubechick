@@ -1,13 +1,13 @@
-import { parseFile } from 'music-metadata';
-import { getFileWithPath } from './utils.js';
+import ytdl from '@distube/ytdl-core';
 
-export async function getAudioInfo(internalId: string) {
+export async function getAudioInfo(url: string) {
   try {
-    const metadata = await parseFile(getFileWithPath(internalId));
+    const metadata = await ytdl.getBasicInfo(url);
+
     return {
-      artist: metadata.common.artist,
-      title: metadata.common.title,
-      duration: metadata.format.duration,
+      artist: metadata.videoDetails.ownerChannelName,
+      title: metadata.videoDetails.title,
+      duration: Number(metadata.videoDetails.lengthSeconds),
     };
   } catch {
     return {};
