@@ -9,7 +9,8 @@ export type PhKeys =
   | 'updateDownloadLiveMessage'
   | 'updateTlgProgress'
   | 'messageWithDescriptionAudio'
-  | 'botIsOverload';
+  | 'botIsOverload'
+  | 'convertToAudio';
 
 type Func = (...args: Array<string | number>) => string;
 
@@ -28,9 +29,13 @@ const store: Record<PhKeys, Func | string> = {
     `${filename} \n\n Ссылка на видео: ${url}`,
   botIsOverload: () =>
     'Бот перегружен, попробуй отправить видео через пару минут',
+  convertToAudio: () => 'Конвертирую в аудио формат...',
 };
 
-export function getText(key: PhKeys, args?: Array<string | number>): string {
+export function getText(
+  key: PhKeys,
+  args: Array<string | number> = [],
+): string {
   if (typeof store[key] === 'function') {
     return store[key](...args);
   }

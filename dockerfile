@@ -1,6 +1,4 @@
 FROM node:20-alpine3.20
-RUN apk --no-cache add curl
-RUN apk -U add yt-dlp
 RUN mkdir /bot
 WORKDIR /bot
 COPY package.json /bot

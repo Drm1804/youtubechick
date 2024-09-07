@@ -39,7 +39,7 @@ export async function getFileAndSendViaAgent(
   try {
     log.info('Начала загружать файлы в телегу ' + name);
 
-    const info = await getAudioInfo(internalId);
+    const info = await getAudioInfo(url);
 
     const { duration, title, artist } = info || {};
     try {
