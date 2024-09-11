@@ -1,4 +1,4 @@
-# youtubchick-bot
+# youtubechick-bot
 
 Бот для загрузки аудио дорожки из YouTube прямо в Telegram
 
@@ -53,3 +53,4 @@ docker image build -t ytb -f dockerfile . &&  docker run -it --restart unless-st
 
 - [yuotube](https://www.youtube.com/channel/UCmGxW0J_DDS3QzPktir5TKw)
 - [telegram](https://t.me/alx_four)
+- [донаты](https://alex-four.com/donate/)
