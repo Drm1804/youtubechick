@@ -31,7 +31,7 @@ export async function getFileAndSendViaAgent(
 
   if (!isSuccessDownload) {
     log.info('Not success download');
-    return await editMes(getText('errorDownloadLiveMessage'));
+    return false;
   }
 
   const agent = getAgent();

@@ -24,7 +24,7 @@ export async function jsDownload(
       .on('error', (err) => {
         log.error(`Error downloading, skipping... `);
         log.error(err);
-        resolve(false);
+        return resolve(false);
       })
       .on('progress', (_, downloaded, total) => {
         const data = `Download progress ${((downloaded / total) * 100).toFixed(
@@ -38,7 +38,7 @@ export async function jsDownload(
       conf.storagePath + internalId + '.mp3',
       updateCb,
     );
-    resolve(convertRes);
+    return resolve(convertRes);
   });
 }
 

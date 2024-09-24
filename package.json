@@ -1,6 +1,6 @@
 {
   "name": "youtubchick-bot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
   "type": "module",
   "engines": {
